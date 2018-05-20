@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  TableName:
+    Type: String
+    Default: 'yourTableName'
+    Description: (Required) The name of the new DynamoDB table you want to create and save to. Minimum 3 characters
+    MinLength: 3
+    MaxLength: 50
+    AllowedPattern: ^[A-Za-z]+$
+    ConstraintDescription: 'Required parameter. Must be characters only. No numbers allowed.'
+Resources:
+  SNSTopic:
+    Type: AWS::SNS::Topic
+  LambdaSubscriber:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      Environment:
+        Variables:
+          TOPIC_ARN: !Ref SNSTopic
+          TABLE_NAME: !Ref TableName
+          PRIMARY_KEY: !Sub ${TableName}Id
+      Policies:
+        - SNSCrudPolicy:
+            TopicName: !GetAtt SNSTopic.TopicName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        SubscribedTopic:
+          Type: SNS
+          Properties:
+            Topic: !Ref SNSTopic
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      AttributeDefinitions:
+        -
+          AttributeName: !Sub "${TableName}Id"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: !Sub "${TableName}Id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+Outputs:
+  SNSTopic:
+    Value: !Ref SNSTopic
+    Description: The SNS topic your Lambda is subscribed to
+  DynamoDBTableArn:
+    Value: !GetAtt DynamoDBTable.Arn
+    Description: The ARN of your DynamoDB Table
+  DynamoDBTableStreamArn:
+    Value: !GetAtt DynamoDBTable.StreamArn
+    Description: The ARN of your DynamoDB Table Stream
