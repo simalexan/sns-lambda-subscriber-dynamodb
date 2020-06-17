@@ -15,16 +15,15 @@ Resources:
   LambdaSubscriber:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.handler
-      Runtime: nodejs8.10
+      CodeUri: src
+      Handler: lambda.handler
+      Runtime: nodejs12.x
       Environment:
         Variables:
           TOPIC_ARN: !Ref SNSTopic
           TABLE_NAME: !Ref TableName
           PRIMARY_KEY: !Sub ${TableName}Id
       Policies:
-        - SNSCrudPolicy:
-            TopicName: !GetAtt SNSTopic.TopicName
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
       Events:
@@ -37,18 +36,16 @@ Resources:
     Properties:
       TableName: !Ref TableName
       AttributeDefinitions:
-        -
-          AttributeName: !Sub "${TableName}Id"
-          AttributeType: "S"
+        - AttributeName: !Sub ${TableName}Id
+          AttributeType: S
       KeySchema:
-        -
-          AttributeName: !Sub "${TableName}Id"
-          KeyType: "HASH"
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+        - AttributeName: !Sub ${TableName}Id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: True
       StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
+        StreamViewType: NEW_IMAGE
 Outputs:
   SNSTopic:
     Value: !Ref SNSTopic
