@@ -12,6 +12,7 @@ exports.handler = (event) => {
 saveToDynamoDB = async (data) => {
   if (!data) return;
   data.id = uuidv4();
+  console.log(data);
   const params = {
     TableName: TABLE_NAME,
     Item: data
