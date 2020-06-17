@@ -21,7 +21,7 @@ saveToDynamoDB = async (data) => {
   try {
     return await docClient.put(params).promise()
   } catch (e) {
-    console.log(err);
-    throw err;
+    console.log(e);
+    throw e;
   }
 };
