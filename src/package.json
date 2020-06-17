@@ -1,0 +1,12 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lambda.js",
+  "keywords": [],
+  "author": "Aleksandar Simovic <alexander.simovic@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^8.1.0"
+  }
+}
