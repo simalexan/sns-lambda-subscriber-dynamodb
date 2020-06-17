@@ -22,7 +22,6 @@ Resources:
         Variables:
           TOPIC_ARN: !Ref SNSTopic
           TABLE_NAME: !Ref TableName
-          PRIMARY_KEY: !Sub ${TableName}Id
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
@@ -36,10 +35,10 @@ Resources:
     Properties:
       TableName: !Ref TableName
       AttributeDefinitions:
-        - AttributeName: !Sub ${TableName}Id
+        - AttributeName: id
           AttributeType: S
       KeySchema:
-        - AttributeName: !Sub ${TableName}Id
+        - AttributeName: id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
       SSESpecification:

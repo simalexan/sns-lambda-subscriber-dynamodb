@@ -3,7 +3,6 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const { v4: uuidv4 } = require('uuid');
 const parseSnsMessage = require('./parse-sns-event');
 const TABLE_NAME = process.env.TABLE_NAME;
-const PRIMARY_KEY = process.env.PRIMARY_KEY;
 
 exports.handler = (event) => {
   let messages = parseSnsMessage(event);
@@ -12,7 +11,7 @@ exports.handler = (event) => {
 
 saveToDynamoDB = async (data) => {
   if (!data) return;
-  data[PRIMARY_KEY] = uuidv4();
+  data.id = uuidv4();
   const params = {
     TableName: TABLE_NAME,
     Item: data
