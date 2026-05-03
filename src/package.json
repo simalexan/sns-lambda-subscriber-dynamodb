@@ -7,6 +7,6 @@
   "author": "Aleksandar Simovic <alexander.simovic@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "uuid": "^8.1.0"
+    "uuid": "^14.0.0"
   }
 }
